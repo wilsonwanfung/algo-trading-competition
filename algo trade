@@ -97,3 +97,7 @@ class AlgoEvent:
         order.buysell = buysell
         order.ordertype = 0  # 0=market_order, 1=limit_order, 2=stop_order
         self.evt.sendOrder(order)
+        order.openclose = openclose
+        order.buysell = buysell
+        order.ordertype = 0  # 0=market_order, 1=limit_order, 2=stop_order
+        self.evt.sendOrder(order)
