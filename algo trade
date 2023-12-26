@@ -42,7 +42,19 @@ class AlgoEvent:
             self.evt.consoleLog(f"upper: {upper_bband}")
             self.evt.consoleLog(f"lower: {lower_bband}")
 
-            if lastprice >= upper_bband:
+            # Check for bullish divergence
+            if lastprice < lower_bband and self.arr_close[-2] > lower_bband:
+                bullish_divergence = True
+            else:
+                bullish_divergence = False
+
+            # Check for bearish divergence
+            if lastprice > upper_bband and self.arr_close[-2] < upper_bband:
+                bearish_divergence = True
+            else:
+                bearish_divergence = False
+
+            if bullish_divergence:
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
                 self.evt.consoleLog(f"rsi: {rsi}")
                 if rsi > 70:
@@ -50,7 +62,7 @@ class AlgoEvent:
                     self.test_sendOrder(lastprice, -1, 'open', stop_loss)
                     self.evt.consoleLog(f"sell")
 
-            if lastprice <= lower_bband:
+            if bearish_divergence:
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
                 self.evt.consoleLog(f"rsi: {rsi}")
                 if rsi < 30:
@@ -95,9 +107,7 @@ class AlgoEvent:
         order.volume = 10
         order.openclose = openclose
         order.buysell = buysell
-        order.ordertype = 0  # 0=market_order, 1=limit_order, 2=stop_order
+        order.ordertype =```python
+        order.ordertype = 0
         self.evt.sendOrder(order)
-        order.openclose = openclose
-        order.buysell = buysell
-        order.ordertype = 0  # 0=market_order, 1=limit_order, 2=stop_order
-        self.evt.sendOrder(order)
+
