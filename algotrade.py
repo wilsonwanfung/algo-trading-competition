@@ -47,8 +47,8 @@ class AlgoEvent:
             # find SMA, upper bband and lower bband
             sma = self.find_sma(self.arr_close, self.ma_len)
             sd = numpy.std(self.arr_close[-self.ma_len::])
-            upper_bband = sma + 2*sd
-            lower_bband = sma - 2*sd
+            upper_bband = sma + 1.5*sd
+            lower_bband = sma - 1.5*sd
             squeeze = self.find_bollinger_squeeze(self.arr_close, self.ma_len)
             # debug print result
             self.evt.consoleLog(f"datetime: {bd[self.myinstrument]['timestamp']}")
@@ -62,7 +62,7 @@ class AlgoEvent:
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
                 self.evt.consoleLog(f"rsi: {rsi}")
                 # check for rsi
-                if rsi > 70 and squeeze < 0.04:
+                if numpy.all(rsi > 70) and numpy.any(squeeze < 0.3):
                     self.test_sendOrder(lastprice, -1, 'open', self.find_positionSize(lastprice))
                     self.evt.consoleLog(f"sell")
             
@@ -72,7 +72,7 @@ class AlgoEvent:
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
                 self.evt.consoleLog(f"rsi: {rsi}")
                 # check for rsi
-                if rsi < 30 and squeeze < 0.04:
+                if numpy.all(rsi < 30) and numpy.any(squeeze < 0.3):
                     self.test_sendOrder(lastprice, 1, "open", self.find_positionSize(lastprice))
                     self.evt.consoleLog(f"buy")
                 
@@ -87,12 +87,8 @@ class AlgoEvent:
                 if self.arr_fastMA[-1] < self.arr_slowMA[-1] and self.arr_fastMA[-2] > self.arr_slowMA[-2]:
                     self.test_sendOrder(lastprice, -1, 'open', find_positionSize(lastprice))
             """
-
-    def find_bollinger_squeeze(self, data, window_size):
-        upper_band, middle_band, lower_band = talib.BBANDS(data, window_size)
-        squeeze = (upper_band - lower_band) / middle_band
-        return squeeze
-    
+            
+            
     def on_marketdatafeed(self, md, ab):
         pass
 
@@ -121,6 +117,11 @@ class AlgoEvent:
         rsi = 100 - (100 / (1 + rs))
     
         return rsi
+        
+    def find_bollinger_squeeze(self, data, window_size):
+        upper_band, middle_band, lower_band = talib.BBANDS(data, window_size)
+        squeeze = (upper_band - lower_band) / middle_band
+        return squeeze    
         
         
     def test_sendOrder(self, lastprice, buysell, openclose, volume = 10):
@@ -154,4 +155,4 @@ class AlgoEvent:
             ratio *= 0.95
             volume = (availableBalance*ratio) / lastprice
             total = availableBalance*ratio
-        return volume
+        return volume*1000
