@@ -112,3 +112,19 @@ class AlgoEvent:
         order.openclose = opencloseorder.buysell = buysell
         order.ordertype = 0  # 0=market_order, 1=limit_order, 2=stop_order
         self.evt.sendOrder(order)
+
+    def find_positionSize(self, lastprice):
+        res = self.evt.getAccountBalance()
+        availableBalance = res["availableBalance"]
+        ratio = 0.3
+        volume = (availableBalance*ratio) / lastprice
+        total =  availableBalance*ratio
+        while total < 0.3 * availableBalance:
+            ratio *= 1.05
+            volume = (availableBalance*ratio) / lastprice
+            total = availableBalance*ratio
+        while total > availableBalance:
+            ratio *= 0.95
+            volume = (availableBalance*ratio) / lastprice
+            total = availableBalance*ratio
+        return volume*1000
