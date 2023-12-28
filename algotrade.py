@@ -156,3 +156,5 @@ class AlgoEvent:
             volume = (availableBalance*ratio) / lastprice
             total = availableBalance*ratio
         return volume*1000
+
+    
