@@ -118,9 +118,10 @@ class AlgoEvent:
     
         return rsi
         
-    def calculate_bollinger_squeeze(self):
-        std = np.std(self.arr_close[-20:])  # Adjust the window size as needed
-        return (self.upper_bband - self.lower_bband) / self.middle_bband / std   
+    def find_bollinger_squeeze(self, data, window_size):
+        upper_band, middle_band, lower_band = talib.BBANDS(data, window_size)
+        squeeze = (upper_band - lower_band) / middle_band
+        return squeeze    
         
         
     def test_sendOrder(self, lastprice, buysell, openclose, volume = 10):
