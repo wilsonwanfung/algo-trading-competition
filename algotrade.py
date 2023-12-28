@@ -47,8 +47,8 @@ class AlgoEvent:
             # find SMA, upper bband and lower bband
             sma = self.find_sma(self.arr_close, self.ma_len)
             sd = numpy.std(self.arr_close[-self.ma_len::])
-            upper_bband = sma + 1.5*sd
-            lower_bband = sma - 1.5*sd
+            upper_bband = sma + 1*sd
+            lower_bband = sma - 1*sd
             squeeze = self.find_bollinger_squeeze(self.arr_close, self.ma_len)
             # debug print result
             self.evt.consoleLog(f"datetime: {bd[self.myinstrument]['timestamp']}")
@@ -62,7 +62,7 @@ class AlgoEvent:
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
                 self.evt.consoleLog(f"rsi: {rsi}")
                 # check for rsi
-                if numpy.all(rsi > 70) and numpy.any(squeeze < 0.3):
+                if numpy.all(rsi > 60) and numpy.any(squeeze < 0.3):
                     self.test_sendOrder(lastprice, -1, 'open', self.find_positionSize(lastprice))
                     self.evt.consoleLog(f"sell")
             
@@ -72,7 +72,7 @@ class AlgoEvent:
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
                 self.evt.consoleLog(f"rsi: {rsi}")
                 # check for rsi
-                if numpy.all(rsi < 30) and numpy.any(squeeze < 0.3):
+                if numpy.all(rsi < 40) and numpy.any(squeeze < 0.3):
                     self.test_sendOrder(lastprice, 1, "open", self.find_positionSize(lastprice))
                     self.evt.consoleLog(f"buy")
                 
