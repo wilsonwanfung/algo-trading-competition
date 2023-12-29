@@ -58,15 +58,18 @@ class AlgoEvent:
             
             # check for sell signal (price crosses upper bband and rsi > 70)
             if lastprice >= upper_bband:
-                # calculate the rsi
+            # calculate the rsi
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
                 self.evt.consoleLog(f"rsi: {rsi}")
                 # check for rsi
                 if rsi > 60 and numpy.any(squeeze < 0.3):
                     self.test_sendOrder(lastprice, -1, 'open', self.find_positionSize(lastprice))
                     self.evt.consoleLog(f"sell")
-
-            # check for buy signal (price crosses lower bband and rsi < 30)
+                elif lastprice < upper_bband and numpy.any(self.arr_close[-2:] >= upper_bband):
+                    self.test_sendOrder(lastprice, -1, 'open', self.find_positionSize(lastprice))
+                    self.evt.consoleLog(f"sell sideways")
+        
+        # check for buy signal (price crosses lower bband and rsi < 30)
             if lastprice <= lower_bband:
                 # calculate the rsi
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
@@ -75,6 +78,9 @@ class AlgoEvent:
                 if rsi < 40 and numpy.any(squeeze < 0.3):
                     self.test_sendOrder(lastprice, 1, "open", self.find_positionSize(lastprice))
                     self.evt.consoleLog(f"buy")
+                elif lastprice > lower_bband and numpy.any(self.arr_close[-2:] <= lower_bband):
+                    self.test_sendOrder(lastprice, 1, 'open', self.find_positionSize(lastprice))
+                    self.evt.consoleLog(f"buy sideways")
             
             """
             # check number of record is at least greater than both self.fastperiod, self.slowperiod
@@ -157,6 +163,7 @@ class AlgoEvent:
         return volume*1000
 
     
+
 
 
     
