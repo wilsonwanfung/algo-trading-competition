@@ -57,8 +57,9 @@ class AlgoEvent:
             self.evt.consoleLog(f"lower: {lower_bband}")
             
             # check for sell signal (price crosses upper bband and rsi > 70)
+           # check for sell signal (price crosses upper bband and rsi > 70)
             if lastprice >= upper_bband:
-                # caclulate the rsi
+                # calculate the rsi
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
                 self.evt.consoleLog(f"rsi: {rsi}")
                 # check for rsi
@@ -68,15 +69,13 @@ class AlgoEvent:
             
             # check for buy signal (price crosses lower bband and rsi < 30)
             if lastprice <= lower_bband:
-                # caclulate the rsi
+                # calculate the rsi
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
                 self.evt.consoleLog(f"rsi: {rsi}")
-                # check for rsi
-                if numpy.all(rsi < 40) and numpy.any(squeeze < 0.3) and lastprice < upper_bband[-1]:
+                # check for rsi and previous price outside upper band
+                if numpy.all(rsi < 40) and numpy.any(squeeze < 0.3) and numpy.any(lastprice < upper_bband):
                     self.test_sendOrder(lastprice, 1, "open", self.find_positionSize(lastprice))
                     self.evt.consoleLog(f"buy")
-                
-            
             """
             # check number of record is at least greater than both self.fastperiod, self.slowperiod
             if not numpy.isnan(self.arr_fastMA[-1]) and not numpy.isnan(self.arr_fastMA[-2]) and not numpy.isnan(self.arr_slowMA[-1]) and not numpy.isnan(self.arr_slowMA[-2]):
@@ -156,5 +155,7 @@ class AlgoEvent:
             volume = (availableBalance*ratio) / lastprice
             total = availableBalance*ratio
         return volume*1000
+
+    
 
     
