@@ -72,7 +72,7 @@ class AlgoEvent:
                 rsi = self.find_rsi(self.arr_close, self.rsi_len)
                 self.evt.consoleLog(f"rsi: {rsi}")
                 # check for rsi
-                if numpy.all(rsi < 40) and numpy.any(squeeze < 0.3):
+                if numpy.all(rsi < 40) and numpy.any(squeeze < 0.3) and lastprice < upper_bband[-1]:
                     self.test_sendOrder(lastprice, 1, "open", self.find_positionSize(lastprice))
                     self.evt.consoleLog(f"buy")
                 
