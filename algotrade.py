@@ -178,7 +178,7 @@ class AlgoEvent:
             total = availableBalance*ratio
         if is_sequeeze:
             volume *= 5
-        return volume*1000
+        return volume
     
 
 
