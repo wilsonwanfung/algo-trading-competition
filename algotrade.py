@@ -408,7 +408,7 @@ class AlgoEvent:
                     # update the update stop loss using ATR stop
     
 
-    def allocate_capital(self, strategy_returns, capital_available):
+    def allocate_capital(strategy_returns, capital_available):
         total_returns = sum(strategy_returns)
         weights = [return_ / total_returns for return_ in strategy_returns]
         allocated_capital = [weight * capital_available for weight in weights]
