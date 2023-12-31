@@ -1,4 +1,3 @@
-
 from AlgoAPI import AlgoAPIUtil, AlgoAPI_Backtest
 from datetime import datetime, timedelta
 import talib, numpy
@@ -23,6 +22,7 @@ class AlgoEvent:
         self.risk_reward_ratio = 2.5 # take profit level : risk_reward_ratio * stoploss
         self.stoploss_atrlen = 2.5 # width of atr for stoplsos
         self.allocationratio_per_trade = 0.3
+        self.allocated_capital = 0
         
         self.openOrder = {} # existing open position for updating stoploss and checking direction
         self.netOrder = {} # existing net order
@@ -131,7 +131,7 @@ class AlgoEvent:
             # execute the trading strat for all instruments
             for key in bd:
                 if self.inst_data[key]['entry_signal'] != 0:
-                    self.execute_strat(bd, key, allocated_capital)
+                    self.execute_strat(bd, key, self.allocated_capital )
             
             
     def on_marketdatafeed(self, md, ab):
@@ -321,7 +321,7 @@ class AlgoEvent:
         
         inst =  self.inst_data[key]
         lastprice =  inst['arr_close'][-1]
-        position_size = allocated_capital[key]
+        position_size = allocated_capital
         
         # set direction, ie decide if buy or sell, based on entry signal
         direction = 1
