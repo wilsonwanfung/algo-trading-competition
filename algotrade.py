@@ -322,7 +322,7 @@ class AlgoEvent:
         
         inst =  self.inst_data[key]
         lastprice =  inst['arr_close'][-1]
-        position_size = self.allocate_capital( self.calculate_strategy_returns(inst['arr_close']), self.evt.getAccountBalance() )
+        position_size = self.allocate_capital( self.calculate_strategy_returns(inst['arr_close']) )
         
         # set direction, ie decide if buy or sell, based on entry signal
         direction = 1
@@ -416,12 +416,16 @@ class AlgoEvent:
                     # update the update stop loss using ATR stop
     
 
-    def allocate_capital(self, strategy_returns, capital_available):
-    
+    def allocate_capital(self, strategy_returns):
         total_returns = sum(strategy_returns)
-        weights = [return_ / total_returns for return_ in strategy_returns]
-        allocated_capital = [weight * capital_available for weight in weights]
-        return allocated_capital         
+        weights = strategy_returns / total_returns
+        
+        res = self.evt.getAccountBalance()
+        bal = res["availableBalance"]
+        
+        allocated_capital = weights*bal
+        
+        return allocated_capital      
         
 
     # utility function to find volume based on available balance
@@ -440,6 +444,8 @@ class AlgoEvent:
             volume = (availableBalance * ratio) / lastprice
             total = volume * lastprice
         return volume
+    
+
     
 
 
