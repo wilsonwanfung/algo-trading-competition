@@ -124,10 +124,11 @@ class AlgoEvent:
         return data[-window_size::].sum()/window_size
         
     def rangingFilter(self, ADXR, AROONOsc, MA_same_direction, rsi):
-        if (ADXR[-1] < 25) or abs(AROONOsc[-1]) < 30 or not MA_same_direction:
-            return True # ranging market
-        else:
-            return False
+        is_ranging = False
+        if ADXR[-1] < 25 or abs(AROONOsc[-1]) < 30 or not MA_same_direction:
+            is_ranging = True
+        return is_ranging
+
     
     def get_entry_signal(self, inst_data):
         inst = inst_data
@@ -169,17 +170,24 @@ class AlgoEvent:
         
         ranging = self.rangingFilter(adxr, aroonosc, MA_same_direction, rsiGeneral)
         
-        if ranging:
-            return 0 
-        
-        # check for sell signal (price crosses upper bband and rsi > 70)
         if lastprice >= upper_bband and rsiGeneral[-1] > 70 or long_stoch_rsi:
-            return -1
-                
-        # check for buy signal (price crosses lower bband and rsi < 30)
+            # Sell signal
+            # Set take profit and stop loss levels
+            take_profit = lastprice - (upper_bband - lower_bband)  
+            stop_loss = upper_bband + (upper_bband - lower_bband)  
+            return -1, take_profit, stop_loss
+
         if lastprice <= lower_bband and rsiGeneral[-1] < 30 or short_stoch_rsi:
-            return 1
-      
+            # Buy signal
+            # Set take profit and stop loss levels
+            take_profit = lastprice + (upper_bband - lower_bband)  
+            stop_loss = lower_bband - (upper_bband - lower_bband)  
+            return 1, take_profit, stop_loss
+
+        # ranging 
+        return 0
+
+    
         
     # execute the trading strat for one instructment given the key and bd       
     def execute_strat(self, bd, key):
