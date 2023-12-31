@@ -322,7 +322,7 @@ class AlgoEvent:
         
         inst =  self.inst_data[key]
         lastprice =  inst['arr_close'][-1]
-        position_size = self.allocate_capital( self.calculate_strategy_returns(inst['arr_close']), self.get_account_balance() )
+        position_size = self.allocate_capital( self.calculate_strategy_returns(inst['arr_close']), self.evt.getAccountBalance() )
         
         # set direction, ie decide if buy or sell, based on entry signal
         direction = 1
@@ -372,20 +372,6 @@ class AlgoEvent:
         order.buysell = buysell
         order.ordertype = 0 #0=market_order, 1=limit_order, 2=stop_order
         self.evt.sendOrder(order)
-
-    def get_account_balance(self):
-        # Assuming you have a TradingPlatformAPI object initialized
-        #api = TradingPlatformAPI()
-    
-        # Call the API method to get the account balance
-        account_balance = self.get_account_balance()
-    
-        # Extract the available capital from the account balance data
-        available_capital = account_balance['available_capital']
-        if(available_capital <= 0.2 ):
-            available_capital *= 10
-    
-        return available_capital
     
     
     # Finder of Stochastic RSI
@@ -431,11 +417,11 @@ class AlgoEvent:
     
 
     def allocate_capital(self, strategy_returns, capital_available):
+    
         total_returns = sum(strategy_returns)
         weights = [return_ / total_returns for return_ in strategy_returns]
         allocated_capital = [weight * capital_available for weight in weights]
-        return allocated_capital
-                    
+        return allocated_capital         
         
 
     # utility function to find volume based on available balance
@@ -455,7 +441,7 @@ class AlgoEvent:
             total = volume * lastprice
         return volume
     
-    
+
 
 
 
