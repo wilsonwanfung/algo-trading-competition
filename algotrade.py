@@ -131,7 +131,7 @@ class AlgoEvent:
             # execute the trading strat for all instruments
             for key in bd:
                 if self.inst_data[key]['entry_signal'] != 0:
-                    self.execute_strat(bd, key, self.allocated_capital )
+                    self.execute_strat(bd, key )
             
             
     def on_marketdatafeed(self, md, ab):
@@ -308,7 +308,7 @@ class AlgoEvent:
       
         
     # execute the trading strat for one instructment given the key and bd       
-    def execute_strat(self, bd, key , allocated_capital):
+    def execute_strat(self, bd, key):
         #self.evt.consoleLog("---------------------------------")
         #self.evt.consoleLog("Executing strat")
 
@@ -321,7 +321,7 @@ class AlgoEvent:
         
         inst =  self.inst_data[key]
         lastprice =  inst['arr_close'][-1]
-        position_size = allocated_capital
+        position_size = allocate_capital(strategy_returns, capital_available)
         
         # set direction, ie decide if buy or sell, based on entry signal
         direction = 1
