@@ -2,6 +2,7 @@ from AlgoAPI import AlgoAPIUtil, AlgoAPI_Backtest
 from datetime import datetime, timedelta
 import talib, numpy
 import pandas as pd
+
 #todo: learn divergence, know more about the rules of the contest
 
 class AlgoEvent:
@@ -321,7 +322,7 @@ class AlgoEvent:
         
         inst =  self.inst_data[key]
         lastprice =  inst['arr_close'][-1]
-        position_size = allocate_capital( calculate_strategy_returns(inst['arr_close']), get_account_balance() )
+        position_size = self.allocate_capital( self.calculate_strategy_returns(inst['arr_close']), self.get_account_balance() )
         
         # set direction, ie decide if buy or sell, based on entry signal
         direction = 1
@@ -348,7 +349,7 @@ class AlgoEvent:
         #self.evt.consoleLog("Executed strat")
         #self.evt.consoleLog("---------------------------------")
 
-    def calculate_strategy_returns(prices):
+    def calculate_strategy_returns(self, prices):
         returns = []
         for i in range(1, len(prices)):
             daily_return = (prices[i] - prices[i-1]) / prices[i-1]
@@ -372,12 +373,12 @@ class AlgoEvent:
         order.ordertype = 0 #0=market_order, 1=limit_order, 2=stop_order
         self.evt.sendOrder(order)
 
-    def get_account_balance():
+    def get_account_balance(self):
         # Assuming you have a TradingPlatformAPI object initialized
-        api = TradingPlatformAPI()
+        #api = TradingPlatformAPI()
     
         # Call the API method to get the account balance
-        account_balance = api.get_account_balance()
+        account_balance = self.get_account_balance()
     
         # Extract the available capital from the account balance data
         available_capital = account_balance['available_capital']
@@ -429,7 +430,7 @@ class AlgoEvent:
                     # update the update stop loss using ATR stop
     
 
-    def allocate_capital(strategy_returns, capital_available):
+    def allocate_capital(self, strategy_returns, capital_available):
         total_returns = sum(strategy_returns)
         weights = [return_ / total_returns for return_ in strategy_returns]
         allocated_capital = [weight * capital_available for weight in weights]
@@ -454,7 +455,6 @@ class AlgoEvent:
             total = volume * lastprice
         return volume
     
-
     
 
 
