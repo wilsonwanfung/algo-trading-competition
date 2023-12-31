@@ -131,7 +131,7 @@ class AlgoEvent:
             # execute the trading strat for all instruments
             for key in bd:
                 if self.inst_data[key]['entry_signal'] != 0:
-                    self.execute_strat(bd, key)
+                    self.execute_strat(bd, key, allocated_capital)
             
             
     def on_marketdatafeed(self, md, ab):
