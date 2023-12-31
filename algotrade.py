@@ -308,7 +308,7 @@ class AlgoEvent:
       
         
     # execute the trading strat for one instructment given the key and bd       
-    def execute_strat(self, bd, key):
+    def execute_strat(self, bd, key , allocated_capital):
         #self.evt.consoleLog("---------------------------------")
         #self.evt.consoleLog("Executing strat")
 
